@@ -62,3 +62,8 @@ if "SearchSortType.MOST_LIKE" not in c:
 else:
     print("MOST_LIKE already present")
 print("ok")
+
+
+# skip login dialog for cookie mode
+import runpy
+runpy.run_path(str(Path(__file__).resolve().parent / "patches" / "skip_cookie_login_dialog.py"))
