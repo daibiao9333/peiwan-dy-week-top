@@ -67,3 +67,4 @@ print("ok")
 # skip login dialog for cookie mode
 import runpy
 runpy.run_path(str(Path(__file__).resolve().parent / "patches" / "skip_cookie_login_dialog.py"))
+runpy.run_path(str(Path(__file__).resolve().parent / "patches" / "cookie_before_goto.py"))
