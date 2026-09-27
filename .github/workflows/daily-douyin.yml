@@ -1,0 +1,86 @@
+name: Douyin week-top crawl
+
+on:
+  schedule:
+    # 21:32 Asia/Shanghai ≈ 13:32 UTC
+    - cron: "32 13 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+
+concurrency:
+  group: douyin-week-top
+  cancel-in-progress: false
+
+jobs:
+  crawl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - name: Checkout pages repo
+        uses: actions/checkout@v4
+
+      - name: Checkout MediaCrawler
+        uses: actions/checkout@v4
+        with:
+          repository: NanmiCoder/MediaCrawler
+          path: MediaCrawler
+
+      - name: Setup Python + uv
+        uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Install MediaCrawler deps
+        working-directory: MediaCrawler
+        run: |
+          uv sync
+          uv run playwright install --with-deps chromium
+
+      - name: Apply peiwan overlay + cookies
+        env:
+          DY_COOKIES: ${{ secrets.DY_COOKIES }}
+          MEDIACRAWLER_ROOT: ${{ github.workspace }}/MediaCrawler
+        run: |
+          test -n "$DY_COOKIES" || { echo "缺少 Secrets: DY_COOKIES"; exit 1; }
+          cp crawler-overlay/scripts/build_week_top_html.py MediaCrawler/scripts/
+          python3 crawler-overlay/apply_peiwan_config.py
+
+      - name: Crawl Douyin search
+        working-directory: MediaCrawler
+        run: |
+          uv run main.py --platform dy --lt cookie --type search
+
+      - name: Build HTML
+        working-directory: MediaCrawler
+        run: |
+          python3 scripts/build_week_top_html.py
+          ls -la data/douyin/*.html | head
+
+      - name: Publish to GitHub Pages tree
+        run: |
+          HTML=$(ls MediaCrawler/data/douyin/陪玩抖音-一周热度Top-latest.html)
+          cp "$HTML" index.html
+          mkdir -p docs
+          cp "$HTML" docs/index.html
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html docs/index.html
+          if git diff --cached --quiet; then
+            echo "no html change"
+          else
+            git commit -m "chore: refresh week-top $(date -u +%Y-%m-%d)"
+            git push
+          fi
+
+      - name: Upload crawl artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: douyin-week-top-${{ github.run_id }}
+          path: |
+            MediaCrawler/data/douyin/*.html
+            MediaCrawler/data/douyin/jsonl/*.jsonl
+          if-no-files-found: warn
