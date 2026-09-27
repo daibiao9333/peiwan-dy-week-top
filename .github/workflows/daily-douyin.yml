@@ -45,6 +45,7 @@ jobs:
           MEDIACRAWLER_ROOT: ${{ github.workspace }}/MediaCrawler
         run: |
           test -n "$DY_COOKIES" || { echo "缺少 Secrets: DY_COOKIES"; exit 1; }
+          mkdir -p MediaCrawler/scripts
           cp crawler-overlay/scripts/build_week_top_html.py MediaCrawler/scripts/
           python3 crawler-overlay/apply_peiwan_config.py
 
