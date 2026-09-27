@@ -57,12 +57,20 @@ jobs:
       - name: Build HTML
         working-directory: MediaCrawler
         run: |
+          if ! ls data/douyin/jsonl/search_contents_*.jsonl >/dev/null 2>&1; then
+            echo "::warning::本次爬取没有 jsonl（抖音对 GitHub 云端 IP 常返回空结果）。保留现有 Pages，不覆盖。"
+            exit 0
+          fi
           python3 scripts/build_week_top_html.py
           ls -la data/douyin/*.html | head
 
       - name: Publish to GitHub Pages tree
         run: |
-          HTML=$(ls MediaCrawler/data/douyin/陪玩抖音-一周热度Top-latest.html)
+          HTML="MediaCrawler/data/douyin/陪玩抖音-一周热度Top-latest.html"
+          if [ ! -f "$HTML" ]; then
+            echo "no new html; skip publish"
+            exit 0
+          fi
           cp "$HTML" index.html
           mkdir -p docs
           cp "$HTML" docs/index.html
