@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>快手 · 一周热度 Top</title>
+<style>
+:root {
+  --bg: #0b0d12; --panel: #141821; --panel2: #1a2030; --text: #eef2ff;
+  --muted: #9aa3b8; --accent: #ff4906; --accent2: #ffb000;
+  --line: rgba(255,255,255,.08); --shadow: 0 12px 40px rgba(0,0,0,.35);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", sans-serif;
+  background: radial-gradient(1200px 600px at 10% -10%, #2a1030 0%, transparent 50%),
+              radial-gradient(900px 500px at 100% 0%, #0d2a3a 0%, transparent 45%), var(--bg);
+  color: var(--text); min-height: 100vh;
+}
+.wrap { max-width: 1180px; margin: 0 auto; padding: 28px 20px 60px; }
+.plat {
+  display: inline-flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;
+  background: rgba(255,255,255,.04); border: 1px solid var(--line); border-radius: 999px; padding: 4px;
+}
+.plat a {
+  text-decoration: none; color: var(--muted); font-size: 13px; font-weight: 600;
+  padding: 6px 12px; border-radius: 999px;
+}
+.plat a.on { background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 60%, #fff)); color: #fff; }
+.plat a:not(.on):hover { color: var(--text); }
+.hero {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 18%, transparent), color-mix(in srgb, var(--accent2) 8%, transparent));
+  border: 1px solid var(--line); border-radius: 20px; padding: 24px 26px; box-shadow: var(--shadow);
+  margin-bottom: 22px;
+}
+.hero h1 { margin: 0 0 10px; font-size: 28px; }
+.hero .sub { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 14px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  background: rgba(255,255,255,.06); border: 1px solid var(--line); border-radius: 999px;
+  padding: 7px 14px; font-size: 13px; color: var(--muted); cursor: pointer;
+  font-family: inherit; transition: .15s ease;
+}
+.chip:hover { border-color: color-mix(in srgb, var(--accent2) 50%, transparent); color: var(--text); }
+.chip.active {
+  background: linear-gradient(135deg, var(--accent), #ff6b4a);
+  border-color: transparent; color: #fff;
+}
+.chip.active b { color: #fff; }
+.chip b { color: var(--accent2); font-weight: 600; margin-left: 4px; }
+.summary { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
+.stat {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+  padding: 12px 16px; min-width: 120px;
+}
+.stat .v { font-size: 22px; font-weight: 700; }
+.stat .l { font-size: 12px; color: var(--muted); margin-top: 2px; }
+#visibleCount { color: var(--accent2); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.card {
+  display: flex; flex-direction: column; text-decoration: none; color: inherit;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+  overflow: hidden; position: relative; transition: transform .18s ease, border-color .18s;
+  box-shadow: 0 8px 24px rgba(0,0,0,.22);
+}
+.card.hidden { display: none; }
+.card:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--accent) 45%, transparent); box-shadow: var(--shadow); }
+.rank {
+  position: absolute; z-index: 2; top: 10px; left: 10px;
+  background: rgba(0,0,0,.65); color: #fff; font-weight: 700; font-size: 12px;
+  width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center;
+}
+.card:nth-child(-n+3) .rank { background: linear-gradient(135deg, var(--accent), #ff7a59); }
+.media { aspect-ratio: 3/4; background: var(--panel2); overflow: hidden; }
+.cover { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cover.placeholder { display: grid; place-items: center; width: 100%; height: 100%; color: var(--muted); font-size: 13px; }
+.body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.kw {
+  align-self: flex-start; font-size: 11px; color: #0b0d12; background: var(--accent2);
+  border-radius: 999px; padding: 2px 8px; font-weight: 600;
+}
+.title {
+  margin: 0; font-size: 14px; line-height: 1.45; font-weight: 600;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.meta-row { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--muted); }
+.author { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 55%; }
+.stats { margin-top: auto; }
+.like { color: var(--accent); font-weight: 700; font-variant-numeric: tabular-nums; font-size: 14px; }
+.foot { margin-top: 28px; text-align: center; color: var(--muted); font-size: 12px; }
+.empty { display: none; text-align: center; color: var(--muted); padding: 40px; grid-column: 1 / -1; }
+.empty.show { display: block; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="plat" aria-label="平台切换"><a class="" href="index.html">抖音</a><a class="on" href="kuaishou.html">快手</a><a class="" href="bilibili.html">B站</a></nav>
+  <header class="hero">
+    <h1>快手 · 一周内 · 热度 Top</h1>
+    <p class="sub">近 7 天至 2026-10-13 18:02 · 按点赞降序 · 点击话题筛选</p>
+    <div class="chips" id="filters"><button type="button" class="chip active" data-filter="all">全部 <b>5</b></button><button type="button" class="chip" data-filter="陪玩">陪玩 <b>3</b></button><button type="button" class="chip" data-filter="陪玩店">陪玩店 <b>0</b></button><button type="button" class="chip" data-filter="打手">打手 <b>0</b></button><button type="button" class="chip" data-filter="趣味单">趣味单 <b>1</b></button><button type="button" class="chip" data-filter="猛攻">猛攻 <b>0</b></button><button type="button" class="chip" data-filter="陪玩售后">陪玩售后 <b>1</b></button><button type="button" class="chip" data-filter="陪玩开庭">陪玩开庭 <b>0</b></button><button type="button" class="chip" data-filter="陪玩系统">陪玩系统 <b>0</b></button><button type="button" class="chip" data-filter="订单系统">订单系统 <b>0</b></button><button type="button" class="chip" data-filter="俱乐部系统">俱乐部系统 <b>0</b></button></div>
+    <div class="summary">
+      <div class="stat"><div class="v"><span id="visibleCount">5</span><span style="font-size:14px;color:var(--muted)"> / 5</span></div><div class="l">当前显示</div></div>
+      <div class="stat"><div class="v">0</div><div class="l">最高点赞</div></div>
+      <div class="stat"><div class="v">7天</div><div class="l">发布窗口</div></div>
+    </div>
+  </header>
+  <section class="grid" id="grid">
+    <a class="card" href="https://www.kuaishou.com/short-video/3xjnn7kkhfny4jc" target="_blank" rel="noopener" data-kw="陪玩"><div class="rank">1</div><div class="media"><img class="cover" src="https://p23.a.yximgs.com/upic/2026/10/08/18/BMjAyNjEwMDgxODIzMTlfMjA4NjU2MzIzXzIxMTU2ODg4MjU5MF8xXzM=_Ba736ff921e98787f72c5ba516c87f24c.jpg?tag=1-1791884268-xpcwebsearch-0-gtesopxxmm-0ded506b28c1456b&amp;clientCacheKey=3xjnn7kkhfny4jc.jpg&amp;di=b7e31747&amp;bp=10004" alt="" loading="lazy" referrerpolicy="no-referrer"></div><div class="body"><div class="kw">陪玩</div><h2 class="title">#老板滴滴</h2><div class="meta-row"><span class="author">饱***）</span><span class="time">10-08 18:23</span></div><div class="stats"><span class="like">❤ 0</span></div></div></a><a class="card" href="https://www.kuaishou.com/short-video/3xuquwu7kn22zqc" target="_blank" rel="noopener" data-kw="陪玩"><div class="rank">2</div><div class="media"><img class="cover" src="https://p23.a.yximgs.com/upic/2026/10/10/14/BMjAyNjEwMTAxNDA0NTRfMTA5MjE5NDQ2N18yMTE3MzYxMDI0MDhfMl8z_Bacd217f080eb32784fb9bdec0d1df44e.jpg?tag=1-1791884268-xpcwebsearch-0-9cumommjfi-08a77eb514b836e3&amp;clientCacheKey=3xuquwu7kn22zqc.jpg&amp;di=b7e31747&amp;bp=10004" alt="" loading="lazy" referrerpolicy="no-referrer"></div><div class="body"><div class="kw">陪玩</div><h2 class="title">#王者代打 #王者代打滴滴 #代打 #王者荣耀工作室 开始接单 ​💜陪玩上⭐代打百星 巅峰  ​⭐️金牌 小国标 指定英雄 ​⭐️包赛季荣耀， 赛季百星 ​⭐️五排法拉利车队稳定上分 高效率 ​💚价格下调 优惠了 下单老板来滴滴</h2><div class="meta-row"><span class="author">落***）</span><span class="time">10-10 14:05</span></div><div class="stats"><span class="like">❤ 0</span></div></div></a><a class="card" href="https://www.kuaishou.com/short-video/3xprai7cy435chy" target="_blank" rel="noopener" data-kw="陪玩"><div class="rank">3</div><div class="media"><img class="cover" src="https://p2.a.yximgs.com/upic/2026/10/08/15/BMjAyNjEwMDgxNTI3MDBfNDE3MzQxMTc0MF8yMTE1NTM0Mzk5ODZfMl8z_B5bbf11cf69fd03908d067c8926890896.jpg?tag=1-1791884268-xpcwebsearch-0-oyo7u8gegz-83142bf3c9c77aad&amp;clientCacheKey=3xprai7cy435chy.jpg&amp;di=b7e31747&amp;bp=10004" alt="" loading="lazy" referrerpolicy="no-referrer"></div><div class="body"><div class="kw">陪玩</div><h2 class="title">pl先dz不然删评💐！ #妍甜俱乐部 #俱乐部 #王者荣耀 #妍甜俱乐部越来越好</h2><div class="meta-row"><span class="author">妍***）</span><span class="time">10-08 15:27</span></div><div class="stats"><span class="like">❤ 0</span></div></div></a><a class="card" href="https://www.kuaishou.com/short-video/3x8abmnhinwggna" target="_blank" rel="noopener" data-kw="趣味单"><div class="rank">4</div><div class="media"><img class="cover" src="https://p2.a.yximgs.com/upic/2026/10/07/17/BMjAyNjEwMDcxNzI3MzFfNTc4NjY5NTdfMjExNDY3NDczOTg5XzFfMw==_ccc_Be8536456e0e00708cb35f4e16ac44d00.jpg?tag=1-1791884301-xpcwebsearch-0-7larsmmupw-850c718f90ee98e6&amp;clientCacheKey=3x8abmnhinwggna_ccc.jpg&amp;di=b7e31747&amp;bp=10004" alt="" loading="lazy" referrerpolicy="no-referrer"></div><div class="body"><div class="kw">趣味单</div><h2 class="title">绝密趣味单，撤离失败一次加50w保底！ #三角洲行动</h2><div class="meta-row"><span class="author">三***竞</span><span class="time">10-07 17:28</span></div><div class="stats"><span class="like">❤ 0</span></div></div></a><a class="card" href="https://www.kuaishou.com/short-video/3xbyfw8buuyefqs" target="_blank" rel="noopener" data-kw="陪玩售后"><div class="rank">5</div><div class="media"><img class="cover" src="https://p2.a.yximgs.com/upic/2026/10/08/16/BMjAyNjEwMDgxNjA2MTlfMjU4MTg3ODI0Ml8yMTE1NTY3ODE5NThfMF8z_ccc_B58e46375bb5aa75e672530162d150504.jpg?tag=1-1791884320-xpcwebsearch-0-wifl4nm6cn-2f5f449bdab14554&amp;clientCacheKey=3xbyfw8buuyefqs_ccc.jpg&amp;di=JAmKYBkQFkBQOBLaoxcyDQ==&amp;bp=10004" alt="" loading="lazy" referrerpolicy="no-referrer"></div><div class="body"><div class="kw">陪玩售后</div><h2 class="title">vier:你是我唯一解释的人 #东东电竞二创大赛 #东东电竞 #刘旭东 </h2><div class="meta-row"><span class="author">珩***）</span><span class="time">10-08 16:14</span></div><div class="stats"><span class="like">❤ 0</span></div></div></a>
+    <p class="empty" id="empty">这个话题下暂时没有内容</p>
+  </section>
+  <p class="foot">MediaCrawler · 本地生成 · search_contents_2026-10-13.jsonl</p>
+</div>
+<script>
+(function() {
+  const chips = document.querySelectorAll('.chip');
+  const cards = document.querySelectorAll('.card');
+  const countEl = document.getElementById('visibleCount');
+  const empty = document.getElementById('empty');
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const f = chip.dataset.filter;
+      let n = 0;
+      cards.forEach(card => {
+        const show = f === 'all' || card.dataset.kw === f;
+        card.classList.toggle('hidden', !show);
+        if (show) n++;
+      });
+      countEl.textContent = n;
+      empty.classList.toggle('show', n === 0);
+    });
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>B站 · 一周热度 Top</title>
+<style>
+:root {
+  --bg: #0b0d12; --panel: #141821; --panel2: #1a2030; --text: #eef2ff;
+  --muted: #9aa3b8; --accent: #00a1d6; --accent2: #fb7299;
+  --line: rgba(255,255,255,.08); --shadow: 0 12px 40px rgba(0,0,0,.35);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", sans-serif;
+  background: radial-gradient(1200px 600px at 10% -10%, #2a1030 0%, transparent 50%),
+              radial-gradient(900px 500px at 100% 0%, #0d2a3a 0%, transparent 45%), var(--bg);
+  color: var(--text); min-height: 100vh;
+}
+.wrap { max-width: 1180px; margin: 0 auto; padding: 28px 20px 60px; }
+.plat {
+  display: inline-flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px;
+  background: rgba(255,255,255,.04); border: 1px solid var(--line); border-radius: 999px; padding: 4px;
+}
+.plat a {
+  text-decoration: none; color: var(--muted); font-size: 13px; font-weight: 600;
+  padding: 6px 12px; border-radius: 999px;
+}
+.plat a.on { background: linear-gradient(135deg, var(--accent), color-mix(in srgb, var(--accent) 60%, #fff)); color: #fff; }
+.plat a:not(.on):hover { color: var(--text); }
+.hero {
+  background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 18%, transparent), color-mix(in srgb, var(--accent2) 8%, transparent));
+  border: 1px solid var(--line); border-radius: 20px; padding: 24px 26px; box-shadow: var(--shadow);
+  margin-bottom: 22px;
+}
+.hero h1 { margin: 0 0 10px; font-size: 28px; }
+.hero .sub { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 14px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  background: rgba(255,255,255,.06); border: 1px solid var(--line); border-radius: 999px;
+  padding: 7px 14px; font-size: 13px; color: var(--muted); cursor: pointer;
+  font-family: inherit; transition: .15s ease;
+}
+.chip:hover { border-color: color-mix(in srgb, var(--accent2) 50%, transparent); color: var(--text); }
+.chip.active {
+  background: linear-gradient(135deg, var(--accent), #ff6b4a);
+  border-color: transparent; color: #fff;
+}
+.chip.active b { color: #fff; }
+.chip b { color: var(--accent2); font-weight: 600; margin-left: 4px; }
+.summary { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
+.stat {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
+  padding: 12px 16px; min-width: 120px;
+}
+.stat .v { font-size: 22px; font-weight: 700; }
+.stat .l { font-size: 12px; color: var(--muted); margin-top: 2px; }
+#visibleCount { color: var(--accent2); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.card {
+  display: flex; flex-direction: column; text-decoration: none; color: inherit;
+  background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
+  overflow: hidden; position: relative; transition: transform .18s ease, border-color .18s;
+  box-shadow: 0 8px 24px rgba(0,0,0,.22);
+}
+.card.hidden { display: none; }
+.card:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--accent) 45%, transparent); box-shadow: var(--shadow); }
+.rank {
+  position: absolute; z-index: 2; top: 10px; left: 10px;
+  background: rgba(0,0,0,.65); color: #fff; font-weight: 700; font-size: 12px;
+  width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center;
+}
+.card:nth-child(-n+3) .rank { background: linear-gradient(135deg, var(--accent), #ff7a59); }
+.media { aspect-ratio: 3/4; background: var(--panel2); overflow: hidden; }
+.cover { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cover.placeholder { display: grid; place-items: center; width: 100%; height: 100%; color: var(--muted); font-size: 13px; }
+.body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.kw {
+  align-self: flex-start; font-size: 11px; color: #0b0d12; background: var(--accent2);
+  border-radius: 999px; padding: 2px 8px; font-weight: 600;
+}
+.title {
+  margin: 0; font-size: 14px; line-height: 1.45; font-weight: 600;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.meta-row { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--muted); }
+.author { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 55%; }
+.stats { margin-top: auto; }
+.like { color: var(--accent); font-weight: 700; font-variant-numeric: tabular-nums; font-size: 14px; }
+.foot { margin-top: 28px; text-align: center; color: var(--muted); font-size: 12px; }
+.empty { display: none; text-align: center; color: var(--muted); padding: 40px; grid-column: 1 / -1; }
+.empty.show { display: block; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav class="plat" aria-label="平台切换"><a class="" href="index.html">抖音</a><a class="" href="kuaishou.html">快手</a><a class="on" href="bilibili.html">B站</a></nav>
+  <header class="hero">
+    <h1>B站 · 一周内 · 热度 Top</h1>
+    <p class="sub">近 7 天至 2026-10-13 18:02 · 按点赞降序 · 点击话题筛选</p>
+    <div class="chips" id="filters"><button type="button" class="chip active" data-filter="all">全部 <b>3</b></button><button type="button" class="chip" data-filter="陪玩">陪玩 <b>3</b></button><button type="button" class="chip" data-filter="陪玩店">陪玩店 <b>0</b></button><button type="button" class="chip" data-filter="打手">打手 <b>0</b></button><button type="button" class="chip" data-filter="趣味单">趣味单 <b>0</b></button><button type="button" class="chip" data-filter="猛攻">猛攻 <b>0</b></button><button type="button" class="chip" data-filter="陪玩售后">陪玩售后 <b>0</b></button><button type="button" class="chip" data-filter="陪玩开庭">陪玩开庭 <b>0</b></button><button type="button" class="chip" data-filter="陪玩系统">陪玩系统 <b>0</b></button><button type="button" class="chip" data-filter="订单系统">订单系统 <b>0</b></button><button type="button" class="chip" data-filter="俱乐部系统">俱乐部系统 <b>0</b></button></div>
+    <div class="summary">
+      <div class="stat"><div class="v"><span id="visibleCount">3</span><span style="font-size:14px;color:var(--muted)"> / 3</span></div><div class="l">当前显示</div></div>
+      <div class="stat"><div class="v">5.1万</div><div class="l">最高点赞</div></div>
+      <div class="stat"><div class="v">7天</div><div class="l">发布窗口</div></div>
+    </div>
+  </header>
+  <section class="grid" id="grid">
+    <a class="card" href="https://www.bilibili.com/video/av117403434486720" target="_blank" rel="noopener" data-kw="陪玩"><div class="rank">1</div><div class="media"><img class="cover" src="http://i2.hdslb.com/bfs/archive/fec9d6aed6541b92654c1246d0c26709490bf4d5.jpg" alt="" loading="lazy" referrerpolicy="no-referrer"></div><div class="body"><div class="kw">陪玩</div><h2 class="title">对话孙宇晨：年轻人如何抓住AI时代的机会？</h2><div class="meta-row"><span class="author">邵***n</span><span class="time">10-10 12:00</span></div><div class="stats"><span class="like">❤ 5.1万</span></div></div></a><a class="card" href="https://www.bilibili.com/video/av117410799618540" target="_blank" rel="noopener" data-kw="陪玩"><div class="rank">2</div><div class="media"><img class="cover" src="http://i0.hdslb.com/bfs/archive/47ff01f20494b72615422d5d3f1eec3b0526dc7b.jpg" alt="" loading="lazy" referrerpolicy="no-referrer"></div><div class="body"><div class="kw">陪玩</div><h2 class="title">楚河谈自己开陪玩店，直言业务不打算死磕三角洲</h2><div class="meta-row"><span class="author">楚***君</span><span class="time">10-10 09:00</span></div><div class="stats"><span class="like">❤ 31</span></div></div></a><a class="card" href="https://www.bilibili.com/video/av117414188554853" target="_blank" rel="noopener" data-kw="陪玩"><div class="rank">3</div><div class="media"><img class="cover" src="http://i0.hdslb.com/bfs/archive/103a45f392aab2af469962c6f50e344e7fdef7c1.jpg" alt="" loading="lazy" referrerpolicy="no-referrer"></div><div class="body"><div class="kw">陪玩</div><h2 class="title">地陪行业揭秘，地陪服务到底是干嘛的，服务的边界在哪里？</h2><div class="meta-row"><span class="author">玉***H</span><span class="time">10-10 10:31</span></div><div class="stats"><span class="like">❤ 6</span></div></div></a>
+    <p class="empty" id="empty">这个话题下暂时没有内容</p>
+  </section>
+  <p class="foot">MediaCrawler · 本地生成 · search_contents_2026-10-13.jsonl</p>
+</div>
+<script>
+(function() {
+  const chips = document.querySelectorAll('.chip');
+  const cards = document.querySelectorAll('.card');
+  const countEl = document.getElementById('visibleCount');
+  const empty = document.getElementById('empty');
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      chips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      const f = chip.dataset.filter;
+      let n = 0;
+      cards.forEach(card => {
+        const show = f === 'all' || card.dataset.kw === f;
+        card.classList.toggle('hidden', !show);
+        if (show) n++;
+      });
+      countEl.textContent = n;
+      empty.classList.toggle('show', n === 0);
+    });
+  });
+})();
+</script>
+</body>
+</html>
