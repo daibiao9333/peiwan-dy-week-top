@@ -66,30 +66,13 @@ jobs:
 
       - name: Publish to GitHub Pages tree
         run: |
+          # 统一总页由 Mac LaunchAgent + publish-week-top-pages.sh 维护。
+          # Actions 云端常只有抖音空结果；绝不要用单平台 HTML 覆盖 index.html。
           HTML="MediaCrawler/data/douyin/陪玩抖音-一周热度Top-latest.html"
           if [ ! -f "$HTML" ]; then
-            echo "no new html; skip publish"
+            echo "no new html; skip"
             exit 0
           fi
-          cp "$HTML" index.html
-          mkdir -p docs
-          cp "$HTML" docs/index.html
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html docs/index.html
-          if git diff --cached --quiet; then
-            echo "no html change"
-          else
-            git commit -m "chore: refresh week-top $(date -u +%Y-%m-%d)"
-            git push
-          fi
-
-      - name: Upload crawl artifact
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: douyin-week-top-${{ github.run_id }}
-          path: |
-            MediaCrawler/data/douyin/*.html
-            MediaCrawler/data/douyin/jsonl/*.jsonl
-          if-no-files-found: warn
+          echo "::notice::爬取产物已生成，但 Pages 统一总页请在 Mac 上 publish-week-top-pages.sh 更新。"
+          echo "artifact path: $HTML"
+          ls -la "$HTML"
