@@ -1,6 +1,13 @@
-# 抖音陪玩 · 一周热度 Top
+# 陪玩一周热度 Top · 抖音 / 快手 / B站
 
-在线页（带话题筛选）：https://daibiao9333.github.io/peiwan-dy-week-top/
+**统一总页（推荐）**：https://daibiao9333.github.io/peiwan-dy-week-top/
+
+同一页用顶部 Tab 切换抖音 / 快手 / B站，支持话题筛选。Hash 直达：`#dy` `#ks` `#bili`。
+
+旧链接仍可用（自动跳到对应 Tab）：
+
+- https://daibiao9333.github.io/peiwan-dy-week-top/kuaishou.html → `#ks`
+- https://daibiao9333.github.io/peiwan-dy-week-top/bilibili.html → `#bili`
 
 ## 怎么更新
 
@@ -8,20 +15,14 @@
 
 Mac LaunchAgent 每晚约 21:32 跑 MediaCrawler，再执行 `scripts/publish-week-top-pages.sh` 更新本站。飞书约 21:50 推链接。
 
-### 半自动：GitHub Actions（已接好）
-
-仓库已配置 `.github/workflows/daily-douyin.yml`，Secrets 名：`DY_COOKIES`。
-
-实测：在 **GitHub 托管的 ubuntu runner** 上，Cookie 能注入，但搜索接口经常返回空列表（抖音对云端机房 IP 的风控）。空结果时工作流不会覆盖现有网页。
-
-若要坚持「用 Actions 调度」，更靠谱的是把 Mac 注册成 **self-hosted runner**，让同样的 workflow 在你电脑上跑（用本机网络/登录态）。需要的话让 AI资讯帮你装。
-
-刷新 Cookie（云端方案用）：
+本地重建并发布：
 
 ```bash
 cd ~/Projects/MediaCrawler
-uv run python scripts/export-dy-cookies.py
-gh secret set DY_COOKIES --repo daibiao9333/peiwan-dy-week-top < data/douyin/dy_cookies.txt
+python3 scripts/build_week_top_html.py --platform all
+bash scripts/publish-week-top-pages.sh
 ```
 
-手动触发：Actions → Douyin week-top crawl → Run workflow
+### 半自动：GitHub Actions
+
+仓库已配置 `.github/workflows/daily-douyin.yml`。云端 IP 常被抖音风控；更靠谱的是 self-hosted runner。
