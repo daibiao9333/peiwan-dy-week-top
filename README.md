@@ -1,13 +1,15 @@
 # 陪玩一周热度 Top · 抖音 / 快手 / B站
 
-**统一总页（推荐）**：https://daibiao9333.github.io/peiwan-dy-week-top/
+**统一总页（推荐，Cloudflare 公开页）**：https://peiwan-week-top.daibiao9333.workers.dev/
+
+本仓库可设为私有；别人只能打开公开页，看不到仓库源码。Mac 每晚仍 git push 本仓库，另有例程把 HTML 同步到 Cloudflare。
 
 同一页用顶部 Tab 切换抖音 / 快手 / B站，支持话题筛选。Hash 直达：`#dy` `#ks` `#bili`。
 
 旧链接仍可用（自动跳到对应 Tab）：
 
-- https://daibiao9333.github.io/peiwan-dy-week-top/kuaishou.html → `#ks`
-- https://daibiao9333.github.io/peiwan-dy-week-top/bilibili.html → `#bili`
+- https://peiwan-week-top.daibiao9333.workers.dev/kuaishou.html → `#ks`
+- https://peiwan-week-top.daibiao9333.workers.dev/bilibili.html → `#bili`
 
 ## 怎么更新
 
