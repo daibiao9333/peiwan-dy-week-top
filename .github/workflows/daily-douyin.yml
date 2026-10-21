@@ -68,7 +68,8 @@ jobs:
         run: |
           # 统一总页由 Mac LaunchAgent + publish-week-top-pages.sh 维护。
           # Actions 云端常只有抖音空结果；绝不要用单平台 HTML 覆盖 index.html。
-          HTML="MediaCrawler/data/douyin/陪玩抖音-一周热度Top-latest.html"
+          HTML="MediaCrawler/data/douyin/陪玩抖音-三天热度Top-latest.html"
+          # fallback legacy alias also written by builder for --days 3
           if [ ! -f "$HTML" ]; then
             echo "no new html; skip"
             exit 0

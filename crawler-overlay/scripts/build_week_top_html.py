@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+import argparse
 import json
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
@@ -9,7 +10,12 @@ ROOT = Path(__file__).resolve().parents[1]
 TZ = timezone(timedelta(hours=8))
 now = datetime.now(TZ)
 day = now.strftime("%Y-%m-%d")
-cutoff = now - timedelta(days=7)
+parser = argparse.ArgumentParser(description='Build peiwan heat HTML')
+parser.add_argument('--days', type=int, default=3, help='heat window days (3=default Mon/Thu, 7=Sunday week)')
+parser.add_argument('--platform', default='dy', help='legacy single-platform builder; hub page built elsewhere')
+args = parser.parse_args()
+DAYS = max(1, int(args.days))
+cutoff = now - timedelta(days=DAYS)
 src = ROOT / "data" / "douyin" / "jsonl" / f"search_contents_{day}.jsonl"
 if not src.exists():
     files = sorted((ROOT / "data" / "douyin" / "jsonl").glob("search_contents_*.jsonl"))
@@ -69,7 +75,7 @@ def fmt_num(n):
         return s.replace(".0万", "万")
     return f"{n:,}"
 
-kws = ["陪玩", "陪玩店", "打手", "趣味单", "猛攻", "陪玩售后", "陪玩开庭"]
+kws = ["陪玩", "陪玩店", "打手", "趣味单", "猛攻", "陪玩售后", "陪玩开庭", "陪玩系统", "订单系统", "俱乐部系统", "陪玩日常", "陪玩团", "护航", "护子"]
 kw_chips = [
     f'<button type="button" class="chip active" data-filter="all">全部 <b>{len(rows)}</b></button>'
 ]
@@ -107,7 +113,7 @@ html = f"""<!DOCTYPE html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>抖音 · 一周热度 Top</title>
+<title>抖音 · {"三天" if DAYS == 3 else "一周"}热度 Top</title>
 <style>
 :root {{
   --bg: #0b0d12; --panel: #141821; --panel2: #1a2030; --text: #eef2ff;
@@ -189,13 +195,13 @@ body {{
 <body>
 <div class="wrap">
   <header class="hero">
-    <h1>抖音 · 一周内 · 热度 Top</h1>
+    <h1>抖音 · {"三天内" if DAYS == 3 else "一周内"} · 热度 Top</h1>
     <p class="sub">近 7 天至 {now.strftime('%Y-%m-%d %H:%M')} · 按点赞降序 · 点击上方话题筛选</p>
     <div class="chips" id="filters">{kw_chips_html}</div>
     <div class="summary">
       <div class="stat"><div class="v"><span id="visibleCount">{len(rows)}</span><span style="font-size:14px;color:var(--muted)"> / {len(rows)}</span></div><div class="l">当前显示</div></div>
       <div class="stat"><div class="v">{top_like}</div><div class="l">最高点赞</div></div>
-      <div class="stat"><div class="v">7天</div><div class="l">发布窗口</div></div>
+      <div class="stat"><div class="v">{DAYS}天</div><div class="l">发布窗口</div></div>
     </div>
   </header>
   <section class="grid" id="grid">
@@ -230,9 +236,13 @@ body {{
 </body>
 </html>
 """
-html_path = out_dir / f"陪玩抖音-一周热度Top-{day}.html"
-latest = out_dir / "陪玩抖音-一周热度Top-latest.html"
+label = "三天" if DAYS == 3 else "一周"
+html_path = out_dir / f"陪玩抖音-{label}热度Top-{day}.html"
+latest = out_dir / f"陪玩抖音-{label}热度Top-latest.html"
 html_path.write_text(html, encoding="utf-8")
 latest.write_text(html, encoding="utf-8")
+if DAYS == 3:
+    # compatibility alias used by older publish/workflow paths
+    (out_dir / "陪玩抖音-一周热度Top-latest.html").write_text(html, encoding="utf-8")
 print(html_path)
-print("rows", len(rows))
+print("days", DAYS, "rows", len(rows))
