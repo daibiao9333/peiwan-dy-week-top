@@ -1,8 +1,8 @@
-# 陪玩一周热度 Top · 抖音 / 快手 / B站
+# 陪玩行业一周热度 · 抖音 / 快手 / B站
 
 **统一总页（推荐，Cloudflare 公开页）**：https://peiwan-week-top.daibiao9333.workers.dev/
 
-本仓库可设为私有；别人只能打开公开页，看不到仓库源码。Mac 每晚仍 git push 本仓库，另有例程把 HTML 同步到 Cloudflare。
+公开页在 Cloudflare；Mac 每晚 git push 本仓库，另有例程把 HTML 同步到 Cloudflare。仓库当前保持公开。
 
 同一页用顶部 Tab 切换抖音 / 快手 / B站，支持话题筛选。Hash 直达：`#dy` `#ks` `#bili`。
 

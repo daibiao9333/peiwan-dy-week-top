@@ -10,7 +10,7 @@ base = root / "config" / "base_config.py"
 text = base.read_text(encoding="utf-8")
 replacements = {
     r"^PLATFORM = .*": 'PLATFORM = "dy"',
-    r"^KEYWORDS = .*": 'KEYWORDS = "陪玩,陪玩店,打手,趣味单,猛攻,陪玩售后,陪玩开庭"',
+    r"^KEYWORDS = .*": 'KEYWORDS = "陪玩,陪玩店,打手,趣味单,猛攻,陪玩售后,陪玩开庭,陪玩系统,订单系统,俱乐部系统,陪玩日常,陪玩团"',
     r"^LOGIN_TYPE = .*": 'LOGIN_TYPE = "cookie"',
     r"^HEADLESS = .*": "HEADLESS = True",
     r"^ENABLE_CDP_MODE = .*": "ENABLE_CDP_MODE = False",
