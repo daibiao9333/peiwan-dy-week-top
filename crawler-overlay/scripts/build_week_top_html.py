@@ -115,88 +115,104 @@ html = f"""<!DOCTYPE html>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>抖音 · {"三天" if DAYS == 3 else "一周"}热度 Top</title>
 <style>
-:root {{
-  --bg: #0b0d12; --panel: #141821; --panel2: #1a2030; --text: #eef2ff;
-  --muted: #9aa3b8; --accent: #fe2c55; --accent2: #25f4ee;
-  --line: rgba(255,255,255,.08); --shadow: 0 12px 40px rgba(0,0,0,.35);
-}}
-* {{ box-sizing: border-box; }}
-body {{
-  margin: 0; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", sans-serif;
-  background: radial-gradient(1200px 600px at 10% -10%, #2a1030 0%, transparent 50%),
-              radial-gradient(900px 500px at 100% 0%, #0d2a3a 0%, transparent 45%), var(--bg);
-  color: var(--text); min-height: 100vh;
-}}
-.wrap {{ max-width: 1180px; margin: 0 auto; padding: 28px 20px 60px; }}
-.hero {{
-  background: linear-gradient(135deg, rgba(254,44,85,.18), rgba(37,244,238,.08));
+:root {
+  --bg: #070B14; --panel: #0A1020; --panel2: #10182A; --preview: #10182A;
+  --text: #E8ECF2; --muted: #8B96A8; --soft: #C8D0DC;
+  --primary: #5B8DEF; --primary-fg: #E8ECF2; --ice: #A8C4F0;
+  --accent: #5B8DEF; --accent2: #A8C4F0;
+  --line: rgba(148, 163, 184, 0.18); --dim: rgba(91, 141, 239, 0.35);
+  --shadow: 0 12px 40px rgba(0,0,0,.45);
+  --radius: .625rem; --radius-lg: calc(var(--radius) + 4px);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: "Noto Sans SC", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", system-ui, sans-serif;
+  background:
+    radial-gradient(1000px 520px at 8% -12%, rgba(91,141,239,.18) 0%, transparent 55%),
+    radial-gradient(800px 480px at 100% 0%, rgba(168,196,240,.08) 0%, transparent 50%),
+    var(--bg);
+  color: var(--text); min-height: 100vh; -webkit-font-smoothing: antialiased;
+}
+.wrap { max-width: 1180px; margin: 0 auto; padding: 28px 20px 60px; }
+.brand-line {
+  margin: 0 0 14px; font-size: 12px; color: var(--muted); letter-spacing: .02em;
+}
+.brand-line a { color: var(--ice); text-decoration: none; border-bottom: 1px solid var(--dim); }
+.brand-line a:hover { color: var(--primary); }
+.hero {
+  background: linear-gradient(135deg, rgba(91,141,239,.14), rgba(16,24,42,.9));
   border: 1px solid var(--line); border-radius: 20px; padding: 24px 26px; box-shadow: var(--shadow);
   margin-bottom: 22px;
-}}
-.hero h1 {{ margin: 0 0 10px; font-size: 28px; }}
-.hero .sub {{ color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 14px; }}
-.chips {{ display: flex; flex-wrap: wrap; gap: 8px; }}
-.chip {{
-  background: rgba(255,255,255,.06); border: 1px solid var(--line); border-radius: 999px;
+}
+.hero h1 { margin: 0 0 10px; font-size: 28px; font-weight: 700; letter-spacing: -0.02em; color: var(--text); }
+.hero .sub { color: var(--muted); font-size: 14px; line-height: 1.6; margin-bottom: 14px; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  background: rgba(255,255,255,.04); border: 1px solid var(--line); border-radius: 999px;
   padding: 7px 14px; font-size: 13px; color: var(--muted); cursor: pointer;
   font-family: inherit; transition: .15s ease;
-}}
-.chip:hover {{ border-color: rgba(37,244,238,.5); color: var(--text); }}
-.chip.active {{
-  background: linear-gradient(135deg, rgba(254,44,85,.9), #ff6b4a);
+}
+.chip:hover { border-color: var(--dim); color: var(--text); }
+.chip.active {
+  background: linear-gradient(135deg, #5B8DEF, #3d6fd4);
   border-color: transparent; color: #fff;
-}}
-.chip.active b {{ color: #fff; }}
-.chip b {{ color: var(--accent2); font-weight: 600; margin-left: 4px; }}
-.summary {{ display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }}
-.stat {{
+}
+.chip.active b { color: #fff; }
+.chip b { color: var(--ice); font-weight: 600; margin-left: 4px; }
+.summary { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 16px; }
+.stat {
   background: var(--panel); border: 1px solid var(--line); border-radius: 14px;
   padding: 12px 16px; min-width: 120px;
-}}
-.stat .v {{ font-size: 22px; font-weight: 700; }}
-.stat .l {{ font-size: 12px; color: var(--muted); margin-top: 2px; }}
-#visibleCount {{ color: var(--accent2); }}
-.grid {{ display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }}
-.card {{
+}
+.stat .v { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; }
+.stat .l { font-size: 12px; color: var(--muted); margin-top: 2px; }
+#visibleCount { color: var(--ice); }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 16px; }
+.card {
   display: flex; flex-direction: column; text-decoration: none; color: inherit;
   background: var(--panel); border: 1px solid var(--line); border-radius: 18px;
   overflow: hidden; position: relative; transition: transform .18s ease, border-color .18s;
-  box-shadow: 0 8px 24px rgba(0,0,0,.22);
-}}
-.card.hidden {{ display: none; }}
-.card:hover {{ transform: translateY(-3px); border-color: rgba(254,44,85,.45); box-shadow: var(--shadow); }}
-.rank {{
+  box-shadow: 0 8px 24px rgba(0,0,0,.28);
+}
+.card.hidden { display: none; }
+.card:hover { transform: translateY(-3px); border-color: var(--dim); box-shadow: var(--shadow); }
+.rank {
   position: absolute; z-index: 2; top: 10px; left: 10px;
-  background: rgba(0,0,0,.65); color: #fff; font-weight: 700; font-size: 12px;
+  background: rgba(7,11,20,.78); color: #fff; font-weight: 700; font-size: 12px;
   width: 28px; height: 28px; border-radius: 9px; display: grid; place-items: center;
-}}
-.card:nth-child(-n+3) .rank {{ background: linear-gradient(135deg, var(--accent), #ff7a59); }}
-.media {{ aspect-ratio: 3/4; background: var(--panel2); overflow: hidden; }}
-.cover {{ width: 100%; height: 100%; object-fit: cover; display: block; }}
-.cover.placeholder {{ display: grid; place-items: center; width: 100%; height: 100%; color: var(--muted); font-size: 13px; }}
-.body {{ padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }}
-.kw {{
-  align-self: flex-start; font-size: 11px; color: #0b0d12; background: var(--accent2);
+}
+.card:nth-child(-n+3) .rank { background: linear-gradient(135deg, #5B8DEF, #3d6fd4); }
+.media { aspect-ratio: 3/4; background: var(--panel2); overflow: hidden; }
+.cover { width: 100%; height: 100%; object-fit: cover; display: block; }
+.cover.placeholder { display: grid; place-items: center; width: 100%; height: 100%; color: var(--muted); font-size: 13px; }
+.body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.kw {
+  align-self: flex-start; font-size: 11px; color: var(--ice);
+  background: rgba(91,141,239,.16); border: 1px solid var(--dim);
   border-radius: 999px; padding: 2px 8px; font-weight: 600;
-}}
-.title {{
+}
+.title {
   margin: 0; font-size: 14px; line-height: 1.45; font-weight: 600;
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
-}}
-.meta-row {{ display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--muted); }}
-.author {{ overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 55%; }}
-.stats {{ margin-top: auto; }}
-.like {{ color: var(--accent); font-weight: 700; font-variant-numeric: tabular-nums; font-size: 14px; }}
-.foot {{ margin-top: 28px; text-align: center; color: var(--muted); font-size: 12px; }}
-.empty {{ display: none; text-align: center; color: var(--muted); padding: 40px; grid-column: 1 / -1; }}
-.empty.show {{ display: block; }}
+}
+.meta-row { display: flex; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--muted); }
+.author { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 55%; }
+.stats { margin-top: auto; }
+.like { color: var(--primary); font-weight: 700; font-variant-numeric: tabular-nums; font-size: 14px; }
+.foot { margin-top: 28px; text-align: center; color: var(--muted); font-size: 12px; line-height: 1.7; }
+.foot a { color: var(--ice); text-decoration: none; border-bottom: 1px solid var(--dim); }
+.foot a:hover { color: var(--primary); }
+.empty { display: none; text-align: center; color: var(--muted); padding: 40px; grid-column: 1 / -1; }
+.empty.show { display: block; }
 </style>
 </head>
 <body>
 <div class="wrap">
+  <p class="brand-line">信息来源于序核 OS 官方网站 <a href="https://www.xuheos.com" target="_blank" rel="noopener">www.xuheos.com</a></p>
   <header class="hero">
     <h1>抖音 · {"三天内" if DAYS == 3 else "一周内"} · 热度 Top</h1>
-    <p class="sub">近 7 天至 {now.strftime('%Y-%m-%d %H:%M')} · 按点赞降序 · 点击上方话题筛选</p>
+    <p class="sub">近 {DAYS} 天至 {now.strftime('%Y-%m-%d %H:%M')} · 按点赞降序 · 点击上方话题筛选</p>
     <div class="chips" id="filters">{kw_chips_html}</div>
     <div class="summary">
       <div class="stat"><div class="v"><span id="visibleCount">{len(rows)}</span><span style="font-size:14px;color:var(--muted)"> / {len(rows)}</span></div><div class="l">当前显示</div></div>
@@ -208,7 +224,7 @@ body {{
     {cards_html}
     <p class="empty" id="empty">这个话题下暂时没有内容</p>
   </section>
-  <p class="foot">MediaCrawler · 本地生成 · {escape(src.name)}</p>
+  <p class="foot">信息来源于序核 OS 官方网站 <a href="https://www.xuheos.com" target="_blank" rel="noopener">www.xuheos.com</a><br>MediaCrawler · 本地生成 · {escape(src.name)}</p>
 </div>
 <script>
 (function() {{
