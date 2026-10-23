@@ -57,12 +57,21 @@ jobs:
       - name: Build HTML
         working-directory: MediaCrawler
         run: |
+          # 云端常爬到空结果；但「空结果 ⇒ 直接 exit 0」会让模板坏了也全绿
+          # （2026-10-22 那次 NameError: name 'bg' 就是这么藏到真有数据那天才炸）。
+          # 所以：无数据时用合成 fixture 跑一遍模板自检，产物不发布、跑完即删。
+          SELF_CHECK=0
           if ! ls data/douyin/jsonl/search_contents_*.jsonl >/dev/null 2>&1; then
-            echo "::warning::本次爬取没有 jsonl（抖音对 GitHub 云端 IP 常返回空结果）。保留现有 Pages，不覆盖。"
-            exit 0
+            echo "::warning::本次爬取没有 jsonl（抖音对 GitHub 云端 IP 常返回空结果）⇒ 用合成 fixture 做模板自检，不发布"
+            python3 ../crawler-overlay/scripts/make_selfcheck_fixture.py "data/douyin/jsonl/search_contents_$(date -u +%F).jsonl"
+            SELF_CHECK=1
           fi
           python3 scripts/build_week_top_html.py
           ls -la data/douyin/*.html | head
+          if [ "$SELF_CHECK" = "1" ]; then
+            rm -f data/douyin/*Top-*.html data/douyin/jsonl/search_contents_*.jsonl
+            echo "模板自检通过；自检产物与 fixture 已清理（不发布、不进 Pages）"
+          fi
 
       - name: Publish to GitHub Pages tree
         run: |
